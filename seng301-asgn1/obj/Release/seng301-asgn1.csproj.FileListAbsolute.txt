@@ -1,0 +1,6 @@
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\bin\Release\seng301-asgn1.exe.config
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\bin\Release\seng301-asgn1.exe
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\bin\Release\seng301-asgn1.pdb
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\bin\Release\grammatica-1.6.dll
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\obj\Release\seng301-asgn1.exe
+C:\Users\oz\Desktop\SENG301\Assignment1\seng301-asgn1\seng301-asgn1\obj\Release\seng301-asgn1.pdb
