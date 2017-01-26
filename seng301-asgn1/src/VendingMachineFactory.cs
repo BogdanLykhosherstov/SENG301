@@ -6,6 +6,7 @@ using Frontend1;
 
 
 namespace seng301_asgn1 {
+    //My new change! testing for GitHub
     /// <summary>
     /// Represents the concrete virtual vending machine factory that you will implement.
     /// This implements the IVendingMachineFactory interface, and so all the functions
