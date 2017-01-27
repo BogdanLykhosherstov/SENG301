@@ -6,30 +6,6 @@ using Frontend1;
 
 
 namespace seng301_asgn1 {
-    /// <summary>
-    /// Represents the concrete virtual vending machine factory that you will implement.
-    /// This implements the IVendingMachineFactory interface, and so all the functions
-    /// are already stubbed out for you.
-    /// 
-    /// Your task will be to replace the TODO statements with actual code.
-    /// 
-    /// Pay particular attention to extractFromDeliveryChute and unloadVendingMachine:
-    /// 
-    /// 1. These are different: extractFromDeliveryChute means that you take out the stuff
-    /// that has already been dispensed by the machine (e.g. pops, money) -- sometimes
-    /// nothing will be dispensed yet; unloadVendingMachine is when you (virtually) open
-    /// the thing up, and extract all of the stuff -- the money we've made, the money that's
-    /// left over, and the unsold pops.
-    /// 
-    /// 2. Their return signatures are very particular. You need to adhere to this return
-    /// signature to enable good integration with the other piece of code (remember:
-    /// this was written by your boss). Right now, they return "empty" things, which is
-    /// something you will ultimately need to modify.
-    /// 
-    /// 3. Each of these return signatures returns typed collections. For a quick primer
-    /// on typed collections: https://www.youtube.com/watch?v=WtpoaacjLtI -- if it does not
-    /// make sense, you can look up "Generic Collection" tutorials for C#.
-    /// </summary>
     public class VendingMachineFactory : IVendingMachineFactory {
         //Variables
         VM dummyVm;
@@ -145,32 +121,6 @@ namespace seng301_asgn1 {
             //insert the coin **FINISH LATER**
             else
             {
-
-                //adding to already existing chutes
-
-                //bool flag = false;
-                //for(int i = 0; i< dummyVm.coinBank.Count; i++)
-                //{
-                //    List<Coin> coinList = dummyVm.coinBank[i];
-                //    for(int j = 0; j < coinList.Count; j++)
-                //    {
-                //        Coin singleCoin = coinList[j];
-                //        if (coin.Value == singleCoin.Value)
-                //        {
-                //            dummyVm.coinBank[i].Add(coin);
-                //            flag = true;
-                //            break;
-                //        }
-                //    }
-                //}  
-                //adding new coin shute if it has not already been loaded by default, making sure to not double add checking the flag
-                //if ((dummyVm.coinKinds.Contains(coin.Value))&&(!flag))
-                //{
-                //    List<Coin> additionalCoin = new List<Coin>();
-                //    additionalCoin.Add(coin);
-                //    int index = dummyVm.coinKinds.IndexOf(coin.Value);
-                //    dummyVm.coinBank.Add(index, additionalCoin);
-                //}
                 dummyVm.customerCoinBank.Add(coin);
                 vendingMachines[vmIndex] = dummyVm;
             }
