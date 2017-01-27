@@ -6,31 +6,6 @@ using Frontend1;
 
 
 namespace seng301_asgn1 {
-    //My new change! testing for GitHub
-    /// <summary>
-    /// Represents the concrete virtual vending machine factory that you will implement.
-    /// This implements the IVendingMachineFactory interface, and so all the functions
-    /// are already stubbed out for you.
-    /// 
-    /// Your task will be to replace the TODO statements with actual code.
-    /// 
-    /// Pay particular attention to extractFromDeliveryChute and unloadVendingMachine:
-    /// 
-    /// 1. These are different: extractFromDeliveryChute means that you take out the stuff
-    /// that has already been dispensed by the machine (e.g. pops, money) -- sometimes
-    /// nothing will be dispensed yet; unloadVendingMachine is when you (virtually) open
-    /// the thing up, and extract all of the stuff -- the money we've made, the money that's
-    /// left over, and the unsold pops.
-    /// 
-    /// 2. Their return signatures are very particular. You need to adhere to this return
-    /// signature to enable good integration with the other piece of code (remember:
-    /// this was written by your boss). Right now, they return "empty" things, which is
-    /// something you will ultimately need to modify.
-    /// 
-    /// 3. Each of these return signatures returns typed collections. For a quick primer
-    /// on typed collections: https://www.youtube.com/watch?v=WtpoaacjLtI -- if it does not
-    /// make sense, you can look up "Generic Collection" tutorials for C#.
-    /// </summary>
     public class VendingMachineFactory : IVendingMachineFactory {
         //Variables
         VM dummyVm;
@@ -140,38 +115,12 @@ namespace seng301_asgn1 {
             //checking if this type of the coin matches any of the coin chutes
             if (!(dummyVm.coinKinds.Contains(coin.Value)))
             {
-                Console.WriteLine("Wrong coin inserted! Dispensing to the delivery chute!");
                 dummyVm.deliveryChute.Add(coin);
+                Console.WriteLine("Wrong coin inserted! Dispensing to the delivery chute!");        
             }
             //insert the coin **FINISH LATER**
             else
             {
-
-                //adding to already existing chutes
-
-                //bool flag = false;
-                //for(int i = 0; i< dummyVm.coinBank.Count; i++)
-                //{
-                //    List<Coin> coinList = dummyVm.coinBank[i];
-                //    for(int j = 0; j < coinList.Count; j++)
-                //    {
-                //        Coin singleCoin = coinList[j];
-                //        if (coin.Value == singleCoin.Value)
-                //        {
-                //            dummyVm.coinBank[i].Add(coin);
-                //            flag = true;
-                //            break;
-                //        }
-                //    }
-                //}  
-                //adding new coin shute if it has not already been loaded by default, making sure to not double add checking the flag
-                //if ((dummyVm.coinKinds.Contains(coin.Value))&&(!flag))
-                //{
-                //    List<Coin> additionalCoin = new List<Coin>();
-                //    additionalCoin.Add(coin);
-                //    int index = dummyVm.coinKinds.IndexOf(coin.Value);
-                //    dummyVm.coinBank.Add(index, additionalCoin);
-                //}
                 dummyVm.customerCoinBank.Add(coin);
                 vendingMachines[vmIndex] = dummyVm;
             }
@@ -186,15 +135,16 @@ namespace seng301_asgn1 {
             //actual code
             int price = dummyVm.popCosts[value];
             int pricePayed = 0;
-
+            
             foreach (Coin coin in dummyVm.customerCoinBank)
             {
                 pricePayed += coin.Value;
             }
+            int change = pricePayed % price;
             //if customer didnt pay enough
             if (pricePayed < price)
             {
-                Console.WriteLine("Not enough money inserted. Keeping da bling suckaaa");
+                //do nothing
             }
             
             else
@@ -203,63 +153,107 @@ namespace seng301_asgn1 {
                 Pop pop = dummyVm.popBank[value][0];
                 dummyVm.deliveryChute.Add(pop);
                 dummyVm.popBank[value].Remove(pop);
-                //then calculate the change and consume the money from customer bank
-                int iterator = -1;
-                foreach (Coin item in dummyVm.customerCoinBank)
+                //creating a copy of customerBank so we can iterate through it and delete items in the real one at the same time
+                Dictionary<int, List<Coin>> coinBankCopy = new Dictionary<int, List<Coin>>();
+                for(int i = 0; i < dummyVm.coinBank.Count;i++)
                 {
-                    if ((pricePayed > 0)&&(pricePayed>=item.Value))
+                    coinBankCopy.Add(i, new List<Coin> (dummyVm.coinBank[i]));
+                }
+                //returns change in reverse order - from biggest coin to smallest coin
+
+                for (int i = coinBankCopy.Count-1; i>=0;i--)
+                {
+
+                    for (int j=0;j<coinBankCopy.Count;j++)
                     {
-                        pricePayed -= item.Value;
-                     
-                        iterator++;
-                    }
-                    //if the remaining change is less than whats in the insertion chute, we move into the machine bank
-                    else if ((pricePayed < item.Value))
-                    {
-                        if (pricePayed > 0)
+                        if(change > 0)
                         {
-                            int indexIterator = 0;
-                            foreach (List<Coin> coins in dummyVm.coinBank.Values)
+                            if (change >= coinBankCopy[i][j].Value)
                             {
-                                foreach (Coin coin in coins)
-                                {
-                                    if (pricePayed > 0)
-                                    {
-                                        pricePayed -= coin.Value;
-                                        dummyVm.coinBank[indexIterator].Remove(coin);
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                indexIterator++;
+                                change -= coinBankCopy[i][j].Value;
+                                Coin tempCoin =coinBankCopy[i][j];
+                                //adding to delivery chute
+                                dummyVm.deliveryChute.Add(tempCoin);
+                                //deleting from the actual list
+                                dummyVm.coinBank[i].Remove(tempCoin);
                             }
+                               
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
-                //deleting those items from the custBank
-                for(int i = 0; i <= iterator; i++)
-                {
-                    dummyVm.customerCoinBank.RemoveAt(0);
-                }
-                //checking if even after dispensing everything from customerBank we still need change
-                
-
-
             }
             vendingMachines[vmIndex] = dummyVm;
         }
         public List<Deliverable> extractFromDeliveryChute(int vmIndex) {
             // TODO: Implement
-            return new List<Deliverable>();
+            List<Deliverable> tempDeliveryChute = new List<Deliverable>();
+            dummyVm = vendingMachines[vmIndex];
+            for(int i =0; i < dummyVm.deliveryChute.Count; i++)
+            {
+                tempDeliveryChute.Add(dummyVm.deliveryChute[i]);
+            }
+            dummyVm.deliveryChute.Clear();
+            vendingMachines[vmIndex] = dummyVm;
+
+            return tempDeliveryChute;
         }
         public List<IList> unloadVendingMachine(int vmIndex) {
             // TODO: Implement
+            //coin bank copy
+            dummyVm = vendingMachines[vmIndex];
+            List<Coin> changeChute = new List<Coin>();
+            List<Pop> popChute = new List<Pop>();
+            List<Coin> madeChute = new List<Coin>();
+
+
+            Dictionary<int, List<Coin>> coinBankCopy = new Dictionary<int, List<Coin>>();
+            for (int i = 0; i < dummyVm.coinBank.Count; i++)
+            {
+                coinBankCopy.Add(i, new List<Coin>(dummyVm.coinBank[i]));
+            }
+            dummyVm.coinBank.Clear();
+
+            for (int i = 0; i < coinBankCopy.Count; i++)
+            {
+                for(int j=0; j < coinBankCopy[i].Count; j++)
+                {
+                    changeChute.Add(coinBankCopy[i][j]);
+                }
+            }
+                //pop bank copy
+                Dictionary<int, List<Pop>> popBankCopy = new Dictionary<int, List<Pop>>();
+            for (int i = 0; i < dummyVm.popBank.Count; i++)
+            {
+                popBankCopy.Add(i, new List<Pop>(dummyVm.popBank[i]));
+            }
+            dummyVm.popBank.Clear();
+            for (int i = 0; i < popBankCopy.Count; i++)
+            {
+                for (int j = 0; j < popBankCopy[i].Count; j++)
+                {
+                    popChute.Add(popBankCopy[i][j]);
+                }
+            }
+
+            //customerCoinBank copy
+            for (int i = 0; i < dummyVm.customerCoinBank.Count; i++)
+            {
+                madeChute.Add(dummyVm.customerCoinBank[i]);
+            }
+            dummyVm.customerCoinBank.Clear();
+            vendingMachines[vmIndex] = dummyVm;
+
             return new List<IList>() {
-                new List<Coin>(),
-                new List<Coin>(),
-                new List<Pop>() };
+                //money in the change maker
+                changeChute,
+                //money we made
+                madeChute,
+                //unsold pops
+                popChute };
             }
     }
 
