@@ -6,7 +6,6 @@ using Frontend1;
 
 
 namespace seng301_asgn1 {
-    //My new change! testing for GitHub
     /// <summary>
     /// Represents the concrete virtual vending machine factory that you will implement.
     /// This implements the IVendingMachineFactory interface, and so all the functions
@@ -140,8 +139,8 @@ namespace seng301_asgn1 {
             //checking if this type of the coin matches any of the coin chutes
             if (!(dummyVm.coinKinds.Contains(coin.Value)))
             {
-                Console.WriteLine("Wrong coin inserted! Dispensing to the delivery chute!");
                 dummyVm.deliveryChute.Add(coin);
+                Console.WriteLine("Wrong coin inserted! Dispensing to the delivery chute!");        
             }
             //insert the coin **FINISH LATER**
             else
@@ -186,15 +185,16 @@ namespace seng301_asgn1 {
             //actual code
             int price = dummyVm.popCosts[value];
             int pricePayed = 0;
-
+            
             foreach (Coin coin in dummyVm.customerCoinBank)
             {
                 pricePayed += coin.Value;
             }
+            int change = pricePayed % price;
             //if customer didnt pay enough
             if (pricePayed < price)
             {
-                Console.WriteLine("Not enough money inserted. Keeping da bling suckaaa");
+                //do nothing
             }
             
             else
@@ -203,63 +203,107 @@ namespace seng301_asgn1 {
                 Pop pop = dummyVm.popBank[value][0];
                 dummyVm.deliveryChute.Add(pop);
                 dummyVm.popBank[value].Remove(pop);
-                //then calculate the change and consume the money from customer bank
-                int iterator = -1;
-                foreach (Coin item in dummyVm.customerCoinBank)
+                //creating a copy of customerBank so we can iterate through it and delete items in the real one at the same time
+                Dictionary<int, List<Coin>> coinBankCopy = new Dictionary<int, List<Coin>>();
+                for(int i = 0; i < dummyVm.coinBank.Count;i++)
                 {
-                    if ((pricePayed > 0)&&(pricePayed>=item.Value))
+                    coinBankCopy.Add(i, new List<Coin> (dummyVm.coinBank[i]));
+                }
+                //returns change in reverse order - from biggest coin to smallest coin
+
+                for (int i = coinBankCopy.Count-1; i>=0;i--)
+                {
+
+                    for (int j=0;j<coinBankCopy.Count;j++)
                     {
-                        pricePayed -= item.Value;
-                     
-                        iterator++;
-                    }
-                    //if the remaining change is less than whats in the insertion chute, we move into the machine bank
-                    else if ((pricePayed < item.Value))
-                    {
-                        if (pricePayed > 0)
+                        if(change > 0)
                         {
-                            int indexIterator = 0;
-                            foreach (List<Coin> coins in dummyVm.coinBank.Values)
+                            if (change >= coinBankCopy[i][j].Value)
                             {
-                                foreach (Coin coin in coins)
-                                {
-                                    if (pricePayed > 0)
-                                    {
-                                        pricePayed -= coin.Value;
-                                        dummyVm.coinBank[indexIterator].Remove(coin);
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                indexIterator++;
+                                change -= coinBankCopy[i][j].Value;
+                                Coin tempCoin =coinBankCopy[i][j];
+                                //adding to delivery chute
+                                dummyVm.deliveryChute.Add(tempCoin);
+                                //deleting from the actual list
+                                dummyVm.coinBank[i].Remove(tempCoin);
                             }
+                               
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
                 }
-                //deleting those items from the custBank
-                for(int i = 0; i <= iterator; i++)
-                {
-                    dummyVm.customerCoinBank.RemoveAt(0);
-                }
-                //checking if even after dispensing everything from customerBank we still need change
-                
-
-
             }
             vendingMachines[vmIndex] = dummyVm;
         }
         public List<Deliverable> extractFromDeliveryChute(int vmIndex) {
             // TODO: Implement
-            return new List<Deliverable>();
+            List<Deliverable> tempDeliveryChute = new List<Deliverable>();
+            dummyVm = vendingMachines[vmIndex];
+            for(int i =0; i < dummyVm.deliveryChute.Count; i++)
+            {
+                tempDeliveryChute.Add(dummyVm.deliveryChute[i]);
+            }
+            dummyVm.deliveryChute.Clear();
+            vendingMachines[vmIndex] = dummyVm;
+
+            return tempDeliveryChute;
         }
         public List<IList> unloadVendingMachine(int vmIndex) {
             // TODO: Implement
+            //coin bank copy
+            dummyVm = vendingMachines[vmIndex];
+            List<Coin> changeChute = new List<Coin>();
+            List<Pop> popChute = new List<Pop>();
+            List<Coin> madeChute = new List<Coin>();
+
+
+            Dictionary<int, List<Coin>> coinBankCopy = new Dictionary<int, List<Coin>>();
+            for (int i = 0; i < dummyVm.coinBank.Count; i++)
+            {
+                coinBankCopy.Add(i, new List<Coin>(dummyVm.coinBank[i]));
+            }
+            dummyVm.coinBank.Clear();
+
+            for (int i = 0; i < coinBankCopy.Count; i++)
+            {
+                for(int j=0; j < coinBankCopy[i].Count; j++)
+                {
+                    changeChute.Add(coinBankCopy[i][j]);
+                }
+            }
+                //pop bank copy
+                Dictionary<int, List<Pop>> popBankCopy = new Dictionary<int, List<Pop>>();
+            for (int i = 0; i < dummyVm.popBank.Count; i++)
+            {
+                popBankCopy.Add(i, new List<Pop>(dummyVm.popBank[i]));
+            }
+            dummyVm.popBank.Clear();
+            for (int i = 0; i < popBankCopy.Count; i++)
+            {
+                for (int j = 0; j < popBankCopy[i].Count; j++)
+                {
+                    popChute.Add(popBankCopy[i][j]);
+                }
+            }
+
+            //customerCoinBank copy
+            for (int i = 0; i < dummyVm.customerCoinBank.Count; i++)
+            {
+                madeChute.Add(dummyVm.customerCoinBank[i]);
+            }
+            dummyVm.customerCoinBank.Clear();
+            vendingMachines[vmIndex] = dummyVm;
+
             return new List<IList>() {
-                new List<Coin>(),
-                new List<Coin>(),
-                new List<Pop>() };
+                //money in the change maker
+                changeChute,
+                //money we made
+                madeChute,
+                //unsold pops
+                popChute };
             }
     }
 

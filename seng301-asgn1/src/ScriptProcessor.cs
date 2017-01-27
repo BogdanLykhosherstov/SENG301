@@ -39,6 +39,7 @@ namespace seng301_asgn1 {
                 }
                 catch {
                     Console.WriteLine("..FAIL (which is good)");
+                   
                 }
             }
         }
